@@ -13,7 +13,8 @@ static bool isChainValid() {
 
     for (int i = 1; i < BlockChain.size(); i++) {
         currentBlock = BlockChain[i];
-        previousBlock = BlockChain[i - 1];
+        int tmp = i - 1;
+        previousBlock = BlockChain[tmp];
 
         if (currentBlock->hash != currentBlock->calculateHash()) {
             std::cout << "Current Hashes not equal!" << std::endl;
@@ -46,16 +47,16 @@ void FormattedPrint(Block* newBlock) {
 int main()
 {
     std::cout << "Hello World!\n";
-    BlockChain.push_back(new Block("Hi Genesis", "0"));
+    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", 1619749388));
     std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
     std::cout << "Hash : " << BlockChain[BlockChain.size() - 1]->hash << std::endl;
-    BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
-    BlockChain.push_back(new Block("Hi Second", BlockChain[BlockChain.size() - 1]->hash));
-    std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
-    BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
-    BlockChain.push_back(new Block("Hi Third", BlockChain[BlockChain.size() - 1]->hash));
-    std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
-    BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    //BlockChain.push_back(new Block("Hi Second", BlockChain[BlockChain.size() - 1]->hash));
+    //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
+    //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    //BlockChain.push_back(new Block("Hi Third", BlockChain[BlockChain.size() - 1]->hash));
+    //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
+    //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
 
     std::cout << "Validation : " << isChainValid() << std::endl;
 

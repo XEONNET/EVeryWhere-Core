@@ -49,10 +49,13 @@ public:
 		return calculatedhash;
 	}
 
-	Block(std::string data, std::string previousHash) {
+	Block(std::string data, std::string previousHash, long timestamp = (long)time(nullptr)) {
 		this->data = data;
 		this->previousHash = previousHash;
-		this->timeStamp = (long)time(nullptr);
+		if (timestamp)
+			this->timeStamp = timestamp;
+		else
+			this->timeStamp = (long)time(nullptr);
 		this->hash = this->calculateHash();
 	}
 };

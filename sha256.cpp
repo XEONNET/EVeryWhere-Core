@@ -29,7 +29,8 @@ void SHA256::transform(const unsigned char* message, unsigned int block_nb)
     int i;
     int j;
     for (i = 0; i < (int)block_nb; i++) {
-        sub_block = message + (i << 6);
+        int tmp = i << 6;
+        sub_block = message + (tmp);
         for (j = 0; j < 16; j++) {
             SHA2_PACK32(&sub_block[j << 2], &w[j]);
         }
@@ -126,7 +127,9 @@ std::string sha256(std::string input)
 
     char buf[2 * SHA256::DIGEST_SIZE + 1];
     buf[2 * SHA256::DIGEST_SIZE] = 0;
-    for (int i = 0; i < SHA256::DIGEST_SIZE; i++)
-        sprintf(buf + i * 2, "%02x", digest[i]);
+    for (int i = 0; i < SHA256::DIGEST_SIZE; i++) {
+        int tmp = i * 2;
+        sprintf(buf + tmp, "%02x", digest[i]);
+    }
     return std::string(buf);
 }
