@@ -31,11 +31,9 @@ public:
 	}
 
 	bool AddNewBlockAndMine() {
-		Block* MiningBlock = new Block("Index # " + std::to_string(BlockChain.size()), BlockChain[BlockChain.size() - 1]->hash, BlockChain.size() - 1);
+		Block* MiningBlock = new Block("Index # " + std::to_string(BlockChain.size()), BlockChain[BlockChain.size() - 1]->hash, BlockChain.size(), difficulty);
 		//BlockChain.push_back(new Block("Index # " + std::to_string(BlockChain.size()), BlockChain[BlockChain.size() - 1]->hash));
-		std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
-		std::cout << "Hash : " << BlockChain[BlockChain.size() - 1]->hash << std::endl;
-		MiningBlock->mineBlock(difficulty);
+		//MiningBlock->mineBlock(difficulty);
 		Block* currentBlock = nullptr;
 		Block* previousBlock = nullptr;
 		currentBlock = MiningBlock;
@@ -54,6 +52,7 @@ public:
 			std::cout << "This block hasn't been mined" << std::endl;
 			return false;
 		}
+
 		BlockChain.push_back(MiningBlock);
 		return true;
 	}

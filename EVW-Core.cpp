@@ -5,6 +5,7 @@
 #include "Block.h"
 #include "Mine.h"
 #include "json.hpp"
+#include "uint256.h"
 
 std::vector<Block*> BlockChain = std::vector<Block*>();
 
@@ -38,16 +39,39 @@ static bool isChainValid() {
 }
 
 void FormattedPrint(Block* newBlock) {
+    for (int i = 0; i < newBlock->transactions.size(); i++) {
+    
+    }
+
+    json::JSON TXIDs;
+
+    for (int i = 0; i < newBlock->transactions.size(); i++) {
+		json::JSON newTXID(
+			{
+				"SourceWallet", "0x"+newBlock->transactions[i]->srcwallet->walletaddress,
+				"DestinyWallet", "0x"+newBlock->transactions[i]->dstwallet->walletaddress,
+				"Amount", newBlock->transactions[i]->amount,
+				"MerkleRoot", "0x"+newBlock->transactions[i]->merkleHash,
+				"TimeStamp", newBlock->transactions[i]->timeStamp
+			}
+		);
+        TXIDs[i] = newTXID;
+    }
+
 	json::JSON newJsonobj(
 		{
 			"index", newBlock->index,
-			"hash", newBlock->hash,
-			"previousHash", newBlock->previousHash,
+			"hash", "0x"+newBlock->hash,
+			"previousHash", "0x"+newBlock->previousHash,
 			"data", newBlock->data,
 			"timeStamp", std::to_string(newBlock->timeStamp),
-			"nonce", std::to_string(newBlock->nonce)
+            "txids", TXIDs
 		}
 	);
+
+    newJsonobj;
+    //array[1] = TXIDs;
+    //system("cls");
     std::cout << newJsonobj << std::endl;
     //std::cout << "{" << std::endl;
     //std::cout << "\"hash\" : " << "\"" + newBlock->hash << "\"," << std::endl;
@@ -60,11 +84,11 @@ void FormattedPrint(Block* newBlock) {
 
 int main()
 {
+
     // The First Validation.
-    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", BlockChain.size() - 1, 1619749388));
-    std::cout << "Trying to Mine Block # " << BlockChain.size() - 1 << std::endl;
-    std::cout << "Hash : " << BlockChain[BlockChain.size() - 1]->hash << std::endl;
-    BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", BlockChain.size(), difficulty, 1619749388));
+    //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    FormattedPrint(BlockChain[BlockChain.size() - 1]);
     Miner* pMiner = new Miner();
     //BlockChain.push_back(new Block("Hi Second", BlockChain[BlockChain.size() - 1]->hash));
     //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
@@ -73,10 +97,10 @@ int main()
     //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
     //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
 
-    std::cout << "Validation : " << isChainValid() << std::endl;
+    //std::cout << "Validation : " << isChainValid() << std::endl;
 
-    for (int i = 0; i < BlockChain.size(); i++) {
-        FormattedPrint(BlockChain[i]);
-    }
+    //for (int i = 0; i < BlockChain.size(); i++) {
+    //    FormattedPrint(BlockChain[i]);
+    //}
     //std::string blockChainJson
 }
