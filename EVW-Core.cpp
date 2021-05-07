@@ -1,11 +1,14 @@
-﻿#include <Windows.h>
+﻿//#include <Windows.h>
+#include "EVW-Core.h"
 #include <iostream>
 #include <vector>
 #include "Block.h"
+#include "Mine.h"
+#include "json.hpp"
 
-static std::vector<Block*> BlockChain = std::vector<Block*>();
+std::vector<Block*> BlockChain = std::vector<Block*>();
 
-int difficulty = 3;
+int difficulty = 1;
 
 static bool isChainValid() {
     Block* currentBlock = nullptr;
@@ -35,22 +38,34 @@ static bool isChainValid() {
 }
 
 void FormattedPrint(Block* newBlock) {
-    std::cout << "{" << std::endl;
-    std::cout << "\"hash\" : " << "\"" + newBlock->hash << "\"," << std::endl;
-    std::cout << "\"previousHash\" : " << "\"" + newBlock->previousHash << "\"," << std::endl;
-    std::cout << "\"data\" : " << "\"" + newBlock->data << "\"," << std::endl;
-    std::cout << "\"timeStamp\" : " << "\"" + std::to_string(newBlock->timeStamp) << "\"," << std::endl;
-    std::cout << "\"nonce\" : " << "\"" + std::to_string(newBlock->nonce) << "\"," << std::endl;
-    std::cout << "}," << std::endl;
+	json::JSON newJsonobj(
+		{
+			"index", newBlock->index,
+			"hash", newBlock->hash,
+			"previousHash", newBlock->previousHash,
+			"data", newBlock->data,
+			"timeStamp", std::to_string(newBlock->timeStamp),
+			"nonce", std::to_string(newBlock->nonce)
+		}
+	);
+    std::cout << newJsonobj << std::endl;
+    //std::cout << "{" << std::endl;
+    //std::cout << "\"hash\" : " << "\"" + newBlock->hash << "\"," << std::endl;
+    //std::cout << "\"previousHash\" : " << "\"" + newBlock->previousHash << "\"," << std::endl;
+    //std::cout << "\"data\" : " << "\"" + newBlock->data << "\"," << std::endl;
+    //std::cout << "\"timeStamp\" : " << "\"" + std::to_string(newBlock->timeStamp) << "\"," << std::endl;
+    //std::cout << "\"nonce\" : " << "\"" + std::to_string(newBlock->nonce) << "\"," << std::endl;
+    //std::cout << "}," << std::endl;
 }
 
 int main()
 {
-    std::cout << "Hello World!\n";
-    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", 1619749388));
-    std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
+    // The First Validation.
+    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", BlockChain.size() - 1, 1619749388));
+    std::cout << "Trying to Mine Block # " << BlockChain.size() - 1 << std::endl;
     std::cout << "Hash : " << BlockChain[BlockChain.size() - 1]->hash << std::endl;
-    //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
+    Miner* pMiner = new Miner();
     //BlockChain.push_back(new Block("Hi Second", BlockChain[BlockChain.size() - 1]->hash));
     //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
     //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);

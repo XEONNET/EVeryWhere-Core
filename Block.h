@@ -1,5 +1,5 @@
 #pragma once
-#include <Windows.h>
+//#include <Windows.h>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -20,6 +20,7 @@ public:
 	std::string data{};
 	long timeStamp{};
 	int nonce{};
+	int index{};
 
 	void MineRes() {
 
@@ -49,7 +50,8 @@ public:
 		return calculatedhash;
 	}
 
-	Block(std::string data, std::string previousHash, long timestamp = (long)time(nullptr)) {
+	Block(std::string data, std::string previousHash, int idx,long timestamp = (long)time(nullptr)) {
+		this->index = idx;
 		this->data = data;
 		this->previousHash = previousHash;
 		if (timestamp)
