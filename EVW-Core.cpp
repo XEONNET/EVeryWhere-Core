@@ -2,6 +2,7 @@
 #include "EVW-Core.h"
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include "Block.h"
 #include "Mine.h"
 #include "json.hpp"
@@ -9,9 +10,11 @@
 
 std::vector<Block*> BlockChain = std::vector<Block*>();
 
-int difficulty = 1;
+int difficulty = 3;
 
-static bool isChainValid() {
+uint256 maxdifficulty = uint256S("0x00000000ffff0000000000000000000000000000000000000000000000000000");
+
+bool isChainValid() {
     Block* currentBlock = nullptr;
     Block* previousBlock = nullptr;
 
@@ -20,7 +23,7 @@ static bool isChainValid() {
         int tmp = i - 1;
         previousBlock = BlockChain[tmp];
 
-        if (currentBlock->hash != currentBlock->calculateHash()) {
+        if (currentBlock->hash.ToString() != currentBlock->calculateHash()) {
             std::cout << "Current Hashes not equal!" << std::endl;
             return false;
         }
@@ -30,7 +33,11 @@ static bool isChainValid() {
             return false;
         }
 
-        if (currentBlock->hash.substr(0, difficulty) != currentBlock->pool) {
+        std::string temp{};
+        for (int i = 0; i < currentBlock->targetbits; i++) {
+            temp += "0";
+        }
+        if (currentBlock->hash.ToString().substr(0, currentBlock->targetbits) != temp) {
             std::cout << "This block hasn't been mined" << std::endl;
             return false;
         }
@@ -38,11 +45,17 @@ static bool isChainValid() {
     return true;
 }
 
-void FormattedPrint(Block* newBlock) {
-    for (int i = 0; i < newBlock->transactions.size(); i++) {
-    
-    }
+void loadfromdb() {
 
+}
+
+void savetodb(json::JSON ad) {
+    std::ofstream output("Blocks.evwdat", std::ios::app);
+    output << ad <<",\n";
+    output.close();
+}
+
+void FormattedPrint(Block* newBlock) {
     json::JSON TXIDs;
 
     for (int i = 0; i < newBlock->transactions.size(); i++) {
@@ -61,15 +74,15 @@ void FormattedPrint(Block* newBlock) {
 	json::JSON newJsonobj(
 		{
 			"index", newBlock->index,
-			"hash", "0x"+newBlock->hash,
-			"previousHash", "0x"+newBlock->previousHash,
-			"data", newBlock->data,
+			"nonce", newBlock->nonce,
+			"hash", "0x"+newBlock->hash.ToString(),
+			"previousHash", "0x"+newBlock->previousHash.ToString(),
 			"timeStamp", std::to_string(newBlock->timeStamp),
             "txids", TXIDs
 		}
 	);
 
-    newJsonobj;
+    savetodb(newJsonobj);
     //array[1] = TXIDs;
     //system("cls");
     std::cout << newJsonobj << std::endl;
@@ -86,10 +99,14 @@ int main()
 {
 
     // The First Validation.
-    BlockChain.push_back(new Block("[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)", "0", BlockChain.size(), difficulty, 1619749388));
+    //Block(std::string data, uint256 previousHash, unsigned int idx, unsigned int diff, unsigned int timestamp = time(nullptr))
+    //[EVW - EVeryWhere] Genesis Block 2021-04-30 AM 11:22:08 (GMT+9 - SEOUL. Korea)
+    BlockChain.push_back(new Block(uint256S("0"), BlockChain.size(), 1, 1619749388));
     //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);
     FormattedPrint(BlockChain[BlockChain.size() - 1]);
     Miner* pMiner = new Miner();
+    //20160Blocks * 1Minues / last 20160blocks min
+
     //BlockChain.push_back(new Block("Hi Second", BlockChain[BlockChain.size() - 1]->hash));
     //std::cout << "Trying to Mine Block # " << BlockChain.size() << std::endl;
     //BlockChain[BlockChain.size() - 1]->mineBlock(difficulty);

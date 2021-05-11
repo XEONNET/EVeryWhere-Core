@@ -19,7 +19,7 @@ public:
 				if (this->AddNewBlockAndMine() == true) {
 					FormattedPrint(BlockChain[BlockChain.size()-1]);
 				}
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 			if (MiningFlag == false) {
 				std::cout << "Miner Stopped." << std::endl;
@@ -31,14 +31,12 @@ public:
 	}
 
 	bool AddNewBlockAndMine() {
-		Block* MiningBlock = new Block("Index # " + std::to_string(BlockChain.size()), BlockChain[BlockChain.size() - 1]->hash, BlockChain.size(), difficulty);
-		//BlockChain.push_back(new Block("Index # " + std::to_string(BlockChain.size()), BlockChain[BlockChain.size() - 1]->hash));
-		//MiningBlock->mineBlock(difficulty);
+		Block* MiningBlock = new Block(BlockChain[BlockChain.size() - 1]->hash, BlockChain.size(), difficulty);
 		Block* currentBlock = nullptr;
 		Block* previousBlock = nullptr;
 		currentBlock = MiningBlock;
 		previousBlock = BlockChain[BlockChain.size() - 1];
-		if (currentBlock->hash != currentBlock->calculateHash()) {
+		if (currentBlock->hash.ToString() != currentBlock->calculateHash()) {
 			std::cout << "Current Hashes not equal!" << std::endl;
 			return false;
 		}
@@ -48,7 +46,12 @@ public:
 			return false;
 		}
 
-		if (currentBlock->hash.substr(0, difficulty) != currentBlock->pool) {
+		std::string temp{};
+		for (int i = 0; i < currentBlock->targetbits; i++) {
+			temp += "0";
+		}
+
+		if (currentBlock->hash.ToString().substr(0, difficulty) != temp) {
 			std::cout << "This block hasn't been mined" << std::endl;
 			return false;
 		}
